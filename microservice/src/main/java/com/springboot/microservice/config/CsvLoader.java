@@ -14,18 +14,25 @@ import com.springboot.microservice.prices.infraestructure.outbound.database.Pric
 import com.springboot.microservice.prices.infraestructure.outbound.database.entity.Prices;
 import com.springboot.microservice.prices.infraestructure.outbound.database.entity.PricesId;
 import com.springboot.microservice.shared.CurrEnum;
+import com.springboot.microservice.users.infraestructure.outbound.database.UsersH2Repository;
+import com.springboot.microservice.users.infraestructure.outbound.database.entity.Users;
 
 @Component
 public class CsvLoader implements CommandLineRunner {
 
     private final PricesH2Repository priceRepository;
+    
+    private final UsersH2Repository usersRepository;
 
-    public CsvLoader(PricesH2Repository priceRepository) {
+    public CsvLoader(PricesH2Repository priceRepository, UsersH2Repository usersRepository) {
         this.priceRepository = priceRepository;
+        this.usersRepository = usersRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
+    	usersRepository.save(new Users("test", "pass"));
+    	
         InputStream inputStream = getClass().getResourceAsStream("/prices.csv");
         if (inputStream == null) {
             throw new FileNotFoundException("data.csv not found in resources");
