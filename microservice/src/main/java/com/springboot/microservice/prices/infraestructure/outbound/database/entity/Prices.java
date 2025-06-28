@@ -9,7 +9,9 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 @Entity
 @Table(name = "prices")
@@ -24,14 +26,20 @@ public class Prices {
 	@Column(name = "price")
 	private float price;
 	
-	@Column(name = "curr")
-	private CurrEnum curr;
+	@Column(name = "currency")
+	private CurrEnum currency;
 	
 	@Column(name = "start_date")
 	private LocalDateTime startDate;
 	
 	@Column(name = "end_date")
 	private LocalDateTime endDate;
+	
+	@Column(name = "last_update")
+	private LocalDateTime lastUpdate;
+	
+	@Column(name = "last_update_by")
+	private String lastUpdateBy;
 
 	
 	
