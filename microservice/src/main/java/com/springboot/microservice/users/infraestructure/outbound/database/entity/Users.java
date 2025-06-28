@@ -5,8 +5,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 
 @Getter
-@Entity
-@Table(name = "users")
+//@Entity
+//@Table(name = "users")
 public class Users {
 
 

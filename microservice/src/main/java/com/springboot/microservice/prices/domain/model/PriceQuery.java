@@ -1,9 +1,11 @@
 package com.springboot.microservice.prices.domain.model;
 
-import lombok.Getter;
+import java.time.LocalDateTime;
 
-@Getter
-public class PriceQuery {
-
-	
-}
+public record PriceQuery(
+	    int productId,
+	    short brandId,
+	    float price,
+	    LocalDateTime startDate,
+	    LocalDateTime endDate
+) {}
