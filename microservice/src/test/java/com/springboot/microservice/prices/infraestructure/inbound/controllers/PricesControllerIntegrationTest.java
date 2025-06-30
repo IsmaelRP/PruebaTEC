@@ -107,4 +107,41 @@ public class PricesControllerIntegrationTest {
 		        .andExpect(jsonPath("$.msg").value("Price found"));
     }
     
+    @Test
+    void testPriceNotFound_noMatchingProductOrBrand() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", bearerToken)
+                .param("product_id", "99999") // Producto inexistente
+                .param("application", "2020-06-14T10:00:00")
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("Price not found"));
+    }
+
+    @Test
+    void testPriceNotFound_applicationDateOutOfRange() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", bearerToken)
+                .param("product_id", "35455")
+                .param("application", "2020-01-01T00:00:00") // Fecha antes de cualquier precio válido
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("Price not found"));
+    }
+
+    @Test
+    void testPriceNotFound_invalidBrandId() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", bearerToken)
+                .param("product_id", "35455")
+                .param("application", "2020-06-14T10:00:00")
+                .param("subsidiary_id", "99") // brandId inexistente
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("Price not found"));
+    }
+
+    
 }
