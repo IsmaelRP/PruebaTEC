@@ -76,7 +76,7 @@ class PricesControllerTest {
         .andDo(print())
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.msg").value("Price not found"))
-            .andExpect(jsonPath("$.body").value("Error"));
+            .andExpect(jsonPath("$.body").value("Error, price not found"));
     }
 
 
