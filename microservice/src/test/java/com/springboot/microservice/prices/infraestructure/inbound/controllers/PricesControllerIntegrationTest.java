@@ -143,5 +143,69 @@ public class PricesControllerIntegrationTest {
                 .andExpect(jsonPath("$.msg").value("Price not found"));
     }
 
+    @Test
+    void testInvalidProductIdType_shouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", bearerToken)
+                .param("product_id", "abc") // valor no numérico
+                .param("application", "2020-06-14T10:00:00")
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.body").value("Error, invalid parameter type"))
+                .andExpect(jsonPath("$.msg").exists());
+    }
     
+    @Test
+    void testMissingParameter_shouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", bearerToken)
+                // Falta product_id
+                .param("application", "2020-06-14T10:00:00")
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.body").value("Error, missing parameter"))
+                .andExpect(jsonPath("$.msg").exists());
+    }
+
+    
+    @Test
+    void testInvalidDateFormat_shouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", bearerToken)
+                .param("product_id", "35455")
+                .param("application", "not-a-date") // formato no válido
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.body").value("Error, invalid parameter type"))
+                .andExpect(jsonPath("$.msg").exists());
+    }
+
+    
+    @Test
+    void testUnauthorizedRequest_shouldReturn401() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                // Sin Authorization
+                .param("product_id", "35455")
+                .param("application", "2020-06-14T10:00:00")
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    
+    @Test
+    void testInvalidToken_shouldReturnUnauthorizedOrForbidden() throws Exception {
+        mockMvc.perform(get("/prices/findPrice")
+                .header("Authorization", "Bearer INVALID_TOKEN")
+                .param("product_id", "35455")
+                .param("application", "2020-06-14T10:00:00")
+                .param("subsidiary_id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+
 }
